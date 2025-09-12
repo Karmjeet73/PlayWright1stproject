@@ -7,7 +7,9 @@ public class BBPS_Electricity {
 
     // XPaths
     private String bbpsCmsMenu = "xpath=//*[@id='MainMenu']/ul/li[7]/a";
-    private String bbpsAdhoc = "xpath=//a[@class=\"level2 selected dynamic\"]";
+    private String bbpsAdhoc = "//a[contains(text(),'BBPS ADHOC')]";
+;;
+
 
     // ✅ Constructor name matches class name
     public BBPS_Electricity(Page page) {
