@@ -4,6 +4,8 @@ import com.microsoft.playwright.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.awt.*;
+
 public class BaseClass {
     protected Playwright playwright;
     protected Browser browser;
@@ -17,18 +19,21 @@ public class BaseClass {
                 new BrowserType.LaunchOptions().setHeadless(false)
         );
         context = browser.newContext(new Browser.NewContextOptions()
-                .setPermissions(java.util.List.of("geolocation"))
-        );
+                .setPermissions(java.util.List.of("geolocation"))); // allow location
         page = context.newPage();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        page.setViewportSize(screenSize.width, screenSize.height);
     }
 
     @AfterMethod
     public void tearDown() {
-        if (browser != null) {
-            browser.close();
+        try {
+            // wait for 10 seconds before closing
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (playwright != null) {
-            playwright.close();
-        }
+        browser.close();
+        playwright.close();
     }
 }
