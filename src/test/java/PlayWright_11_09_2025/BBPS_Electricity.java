@@ -8,44 +8,63 @@ public class BBPS_Electricity {
     // XPaths
     private String bbpsCmsMenu = "xpath=//*[@id='MainMenu']/ul/li[7]/a";
     private String bbpsAdhoc = "//a[contains(text(),'BBPS ADHOC')]";
-    private String Electricity ="//input[@id='ContentPlaceHolder1_DataListDashboardIcon_ImageButton1_12']";
-    private String Elect_Selection="//a[@class='chosen-single']";
-//    private String search="//input[@type='text']";
-//    private String search_selection="//li[@class='active-result result-selected']";
-;;
+    private String Electricity = "//input[@id='ContentPlaceHolder1_DataListDashboardIcon_ImageButton1_12']";
+    private String Elect_Selection = "//a[@class='chosen-single']";
+    private String ConsumerNumber = "#ContentPlaceHolder1_txt_AccountNumber";
+    private String DepositerName1 = "#ContentPlaceHolder1_txtDepositorName";
+    private String DepositerMobile1 = "#ContentPlaceHolder1_txtDepositorMobile";
+    private String Submit = "#ContentPlaceHolder1_btn_RegisterBeneficiary";
+    private String Hybrid_RadioButton = "//input[@id='ContentPlaceHolder1_rbtn_latePayment']";
+    private String Instant_Radio_Button = "//input[@id='ContentPlaceHolder1_rbtn_InstantPayment']";
+    private String PayButton = "#ContentPlaceHolder1_btn_FundTransfer";
+    private String OkButton = "//*[@id='alertify-ok']";
 
-
-    // ✅ Constructor name matches class name
     public BBPS_Electricity(Page page) {
         this.page = page;
     }
 
-    // Open BBPS CMS menu
     public void openBBPSMenu() {
         page.click(bbpsCmsMenu);
     }
 
-    // Select BBPS Adhoc option
     public void selectBBPSAdhoc() {
-        // Wait & click BBPS Adhoc
         page.waitForSelector(bbpsAdhoc);
         page.click(bbpsAdhoc);
-
-        // Select Electricity option
         page.click(Electricity);
+//        page.click(Elect_Selection);
+    }
 
-        // Open provider selection dropdown
-        // Click dropdown to open
+    public void performTransaction(String billerName, String accountNumber, String depositerName, String depositerMobile) {
+        System.out.println("Processing biller: " + billerName);
+
+        // ---------------- HYBRID Transaction ----------------
+        page.click(Elect_Selection);
+        page.click("//li[contains(text(),'" + billerName + "')]");
+        page.fill(ConsumerNumber, accountNumber);
+        page.fill(DepositerName1, depositerName);
+        page.fill(DepositerMobile1, depositerMobile);
+        page.click(Submit);
+        page.click(Hybrid_RadioButton);
+        page.click(PayButton);
+
+        page.waitForSelector(OkButton);
+        page.click(OkButton);
+
+        page.waitForTimeout(3000); // wait 3s before next transaction
         page.click(Elect_Selection);
 
-// Type biller name into search input
-        page.click("//li[contains(text(),'BSES RAJDHANI - DELHI')]");
+        // ---------------- INSTANT Transaction ----------------
 
+        page.click("//li[contains(text(),'" + billerName + "')]");
 
-        // OR if you still need to click the search result after Enter
-        // page.click(search_selection);
-    }}
+        page.fill(ConsumerNumber, accountNumber);
+        page.fill(DepositerName1, depositerName);
+        page.fill(DepositerMobile1, depositerMobile);
+        page.click(Submit);
+        page.click(Instant_Radio_Button);
+        page.click(PayButton);
 
-
-//*[@id="ContentPlaceHolder1_ddlBillerName"]
-
+        page.waitForSelector(OkButton);
+        page.click(OkButton);
+    }
+}
